@@ -54,8 +54,8 @@ public class Players {
     public String toString() {
         return "Players{" +
                 "name='" + name + '\'' +
-                ", score=" + score + '\'' +
-                ", gender=" + gender +
+                ", score=" + score +
+                ", gender='" + gender + '\'' +
                 '}';
     }
 

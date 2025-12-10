@@ -15,6 +15,10 @@ Classe mere : Piece.java
                 -Knight.java
                 -Pawn.java
 
+# Pong entities
+
+ball.java
+raquete.java
 
 # GUI 
 
