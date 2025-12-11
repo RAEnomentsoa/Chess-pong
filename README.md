@@ -25,3 +25,9 @@ raquete.java
 TerrainWindow.java:
     -TerrainPanel.java
 
+# compile
+javac -d out (Get-ChildItem -Recurse -Filter *.java).FullName
+
+# run client
+java -cp out net.client.GameClient
+

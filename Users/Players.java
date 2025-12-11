@@ -2,11 +2,16 @@ package Users;
 
 public class Players {
 
+    private int id;
     private String name;
     private int score;
     private String gender;
 
     // geters
+    public int getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
@@ -20,6 +25,10 @@ public class Players {
     }
 
     // seters
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -33,10 +42,11 @@ public class Players {
     }
 
     // Constructor
-    public Players(String name, int score, String gender) {
+    public Players(int id, String name, int score, String gender) {
         this.name = name;
         this.score = score;
         this.gender = gender;
+        this.setId(id);
     }
 
     public void increaseScore(int points) {
