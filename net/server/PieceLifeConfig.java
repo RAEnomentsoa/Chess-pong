@@ -2,10 +2,10 @@ package net.server;
 
 public class PieceLifeConfig {
 
-    public int king = 10;
-    public int queen = 12;
-    public int rook = 6;
-    public int bishop = 8;
-    public int knight = 5;
-    public int pawn = 3;
+    public int king = 0;
+    public int queen = 0;
+    public int rook = 0;
+    public int bishop = 0;
+    public int knight = 0;
+    public int pawn = 0;
 }

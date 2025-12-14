@@ -2,6 +2,12 @@ package net.server;
 
 import javax.swing.*;
 import java.awt.*;
+import net.server.EJB.GameConfigEntity;
+import net.server.EJB.GameConfigServiceRemote;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import java.util.Properties;
 
 public class GameSetupFrame extends JFrame {
 
@@ -21,6 +27,80 @@ public class GameSetupFrame extends JFrame {
         add(createHeader(), BorderLayout.NORTH);
         add(createCenter(), BorderLayout.CENTER);
         add(createFooter(), BorderLayout.SOUTH);
+    }
+
+    // connection EJB
+    private GameConfigServiceRemote lookupEJB() throws Exception {
+
+        Properties props = new Properties();
+        props.put(Context.INITIAL_CONTEXT_FACTORY,
+                "org.wildfly.naming.client.WildFlyInitialContextFactory");
+        props.put(Context.PROVIDER_URL,
+                "http-remoting://localhost:8080");
+
+        Context ctx = new InitialContext(props);
+
+        return (GameConfigServiceRemote) ctx.lookup(
+                "ejb:/chess-pong-ejb/GameConfigServiceBean!" +
+                        "net.server.EJB.GameConfigServiceRemote");
+    }
+
+    // save to EJB
+    private void saveConfigToEJB(int size, PieceLifeConfig life) {
+        try {
+            GameConfigServiceRemote service = lookupEJB();
+
+            GameConfigEntity e = new GameConfigEntity();
+            e.setSize(size);
+            e.setKingLife(life.king);
+            e.setQueenLife(life.queen);
+            e.setRookLife(life.rook);
+            e.setBishopLife(life.bishop);
+            e.setKnightLife(life.knight);
+            e.setPawnLife(life.pawn);
+
+            service.save(e);
+
+            System.out.println("[SETUP] Config saved to EJB");
+
+        } catch (Exception ex) {
+            System.out.println("[SETUP] Failed to save config to EJB");
+            ex.printStackTrace();
+        }
+    }
+
+    // peice life config ejb
+    private PieceLifeConfig loadConfigFromEJB() {
+        try {
+            GameConfigServiceRemote service = lookupEJB();
+            GameConfigEntity e = service.loadLast();
+
+            PieceLifeConfig life = new PieceLifeConfig();
+            life.king = e.getKingLife();
+            life.queen = e.getQueenLife();
+            life.rook = e.getRookLife();
+            life.bishop = e.getBishopLife();
+            life.knight = e.getKnightLife();
+            life.pawn = e.getPawnLife();
+
+            sizeBox.setSelectedItem(e.getSize());
+
+            kingLife.setValue(life.king);
+            queenLife.setValue(life.queen);
+            rookLife.setValue(life.rook);
+            bishopLife.setValue(life.bishop);
+            knightLife.setValue(life.knight);
+            pawnLife.setValue(life.pawn);
+
+            System.out.println("[SETUP] Config loaded from EJB");
+
+            return life;
+
+        } catch (Exception ex) {
+            System.out.println("[SETUP] Failed to load config from EJB");
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     private JComponent createHeader() {
@@ -119,26 +199,133 @@ public class GameSetupFrame extends JFrame {
         JButton start = new JButton("START GAME");
         start.setFont(new Font("Arial", Font.BOLD, 16));
 
-        start.addActionListener(e -> {
-            int size = (int) sizeBox.getSelectedItem();
+        // start.addActionListener(e -> {
+        // int size = (int) sizeBox.getSelectedItem();
 
-            PieceLifeConfig life = new PieceLifeConfig();
-            life.king = (int) kingLife.getValue();
-            life.queen = (int) queenLife.getValue();
-            life.rook = (int) rookLife.getValue();
-            life.bishop = (int) bishopLife.getValue();
-            life.knight = (int) knightLife.getValue();
-            life.pawn = (int) pawnLife.getValue();
+        // PieceLifeConfig life = new PieceLifeConfig();
+        // life.king = (int) kingLife.getValue();
+        // life.queen = (int) queenLife.getValue();
+        // life.rook = (int) rookLife.getValue();
+        // life.bishop = (int) bishopLife.getValue();
+        // life.knight = (int) knightLife.getValue();
+        // life.pawn = (int) pawnLife.getValue();
 
-            dispose();
+        // dispose();
 
-            new Thread(() -> {
-                try {
-                    new GameServer(5000, size, life);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+        // new Thread(() -> {
+        // try {
+        // new GameServer(5000, size, life);
+        // } catch (Exception ex) {
+        // ex.printStackTrace();
+        // }
+        // }).start();
+        // });
+
+        // -----------------------------------------------------mande tsisy egb
+        // start.addActionListener(e -> {
+
+        // int size = (int) sizeBox.getSelectedItem();
+
+        // PieceLifeConfig initialLife = new PieceLifeConfig();
+        // initialLife.king = (int) kingLife.getValue();
+        // initialLife.queen = (int) queenLife.getValue();
+        // initialLife.rook = (int) rookLife.getValue();
+        // initialLife.bishop = (int) bishopLife.getValue();
+        // initialLife.knight = (int) knightLife.getValue();
+        // initialLife.pawn = (int) pawnLife.getValue();
+
+        // // 1️⃣ SAVE GUI → EJB
+        // saveConfigToEJB(size, initialLife);
+
+        // // 2️⃣ LOAD BACK FROM EJB (proof + sync)
+        // PieceLifeConfig fromEJB = loadConfigFromEJB();
+        // final int finalSize;
+        // final PieceLifeConfig finalLife;
+        // if (fromEJB != null) {
+        // finalLife = fromEJB;
+        // finalSize = (int) sizeBox.getSelectedItem();
+        // } else {
+        // finalLife = initialLife;
+        // finalSize = size;
+        // }
+
+        // dispose();
+
+        // new Thread(() -> {
+        // try {
+        // new GameServer(5000, finalSize, finalLife);
+        // } catch (Exception ex) {
+        // ex.printStackTrace();
+        // }
+        // }).start();
+        // });
+
+        start.addActionListener(evt -> {
+
+            try {
+                // 🔒 EJB IS REQUIRED
+                GameConfigServiceRemote service = lookupEJB();
+                int size = (int) sizeBox.getSelectedItem();
+
+                GameConfigEntity entity = new GameConfigEntity();
+                entity.setSize(size);
+                entity.setKingLife((int) kingLife.getValue());
+                entity.setQueenLife((int) queenLife.getValue());
+                entity.setRookLife((int) rookLife.getValue());
+                entity.setBishopLife((int) bishopLife.getValue());
+                entity.setKnightLife((int) knightLife.getValue());
+                entity.setPawnLife((int) pawnLife.getValue());
+
+                // 1️⃣ SAVE GUI → EJB
+                service.save(entity);
+                GameConfigEntity e = service.loadLast();
+
+                // ny any @ ejb no ampiasaina raha ohatra ka misy
+                kingLife.setEnabled(false);
+                queenLife.setEnabled(false);
+                rookLife.setEnabled(false);
+                bishopLife.setEnabled(false);
+                knightLife.setEnabled(false);
+                pawnLife.setEnabled(false);
+                sizeBox.setEnabled(false);
+
+                if (e == null) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "No configuration found in EJB",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
-            }).start();
+
+                // Build config ONLY from EJB
+                PieceLifeConfig life = new PieceLifeConfig();
+                life.king = e.getKingLife();
+                life.queen = e.getQueenLife();
+                life.rook = e.getRookLife();
+                life.bishop = e.getBishopLife();
+                life.knight = e.getKnightLife();
+                life.pawn = e.getPawnLife();
+
+                int size2 = e.getSize();
+
+                dispose();
+
+                new Thread(() -> {
+                    try {
+                        new GameServer(5000, size2, life);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }).start();
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "EJB / WildFly is not available.\nServer cannot start.",
+                        "EJB REQUIRED",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         JPanel panel = new JPanel();
