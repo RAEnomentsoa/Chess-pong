@@ -95,6 +95,12 @@ public class GameLogic {
 
         GameState state = new GameState();
 
+        state.boardSizex = terrain.getSizex();
+        state.boardSizey = terrain.getSizey();
+        state.cellSize = this.cellSize;
+        state.boardWidth = this.boardWidth;
+        state.boardHeight = this.boardHeight;
+
         // ball
         state.ballX = ball.getX();
         state.ballY = ball.getY();
@@ -119,9 +125,10 @@ public class GameLogic {
 
         // pieces
         List<PieceState> list = new ArrayList<>();
-        int size = terrain.getSize();
+        int size = terrain.getSizex();
+        int sizey = terrain.getSizey();
         for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
+            for (int y = 0; y < sizey; y++) { // fix 8 ny axe y @zay tsy miova ny longeur fa ny largeur ihany
                 Piece p = terrain.getPiece(x, y);
                 if (p != null) {
                     PieceState ps = new PieceState();
@@ -173,10 +180,11 @@ public class GameLogic {
 
     private void checkPieceCollisions() {
         Rectangle b = ball.getBounds();
-        int size = terrain.getSize();
+        int size = terrain.getSizex();
+        int sizey = terrain.getSizey();
 
         for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
+            for (int y = 0; y < sizey; y++) {
 
                 Piece p = terrain.getPiece(x, y);
                 if (p != null) {

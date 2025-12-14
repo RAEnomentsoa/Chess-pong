@@ -13,8 +13,9 @@ public class TerrainPanelNetwork extends JPanel {
     private GameClient client;
     private GameState state;
 
-    private final int cellSize = 60;
-    private final int size = 8;
+    private int cellSize = 60;
+    private int size = 8;
+    private int sizey = 8;
 
     public TerrainPanelNetwork(GameClient client) {
         this.client = client;
@@ -42,6 +43,16 @@ public class TerrainPanelNetwork extends JPanel {
 
     public void updateState(GameState state) {
         this.state = state;
+
+        // read dynamic world info from server
+        this.size = state.boardSizex;
+        this.sizey = state.boardSizey;
+        this.cellSize = state.cellSize;
+
+        // resize client window to match board
+        setPreferredSize(new Dimension(state.boardWidth, state.boardHeight));
+        revalidate();
+        repaint();
     }
 
     @Override
@@ -53,7 +64,7 @@ public class TerrainPanelNetwork extends JPanel {
 
         // Draw board grid
         for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
+            for (int y = 0; y < sizey; y++) { // fixena 8 ny axe y @zay tsy miova ny longeur fa ny largeur ihany
 
                 int px = x * cellSize;
                 int py = y * cellSize;

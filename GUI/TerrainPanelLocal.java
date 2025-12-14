@@ -28,7 +28,7 @@ public class TerrainPanelLocal extends JPanel {
         // ------------------------------
         // INITIALIZE GAME OBJECTS
         // ------------------------------
-        int size = terrain.getSize();
+        int size = terrain.getSizex();
         int boardWidth = size * cellSize;
         int boardHeight = size * cellSize;
 

@@ -23,6 +23,13 @@ public class GameState implements Serializable {
     public int player1Score;
     public int player2Score;
 
+    // board configuration
+    public int boardSizex;
+    public int boardSizey;
+    public int cellSize;
+    public int boardWidth;
+    public int boardHeight;
+
     // game over
     public boolean gameOver = false;
     public String winnerName;

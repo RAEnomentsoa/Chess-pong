@@ -31,3 +31,23 @@ javac -d out (Get-ChildItem -Recurse -Filter *.java).FullName
 # run client
 java -cp out net.client.GameClient
 
+
+-----------------------------+
+## ilay version sous reseaux | 
+-----------------------------+
+
+folder: net 
+      folder: client
+          -classes:
+              # GameClient
+              # TerrainState
+
+      folder: core
+          -classes:
+              # GameLogic
+              # GameState
+              # PeiceState 
+      folder: server
+          -classes:
+              # Gameserver
+             
