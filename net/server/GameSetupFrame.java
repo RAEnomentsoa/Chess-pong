@@ -263,7 +263,7 @@ public class GameSetupFrame extends JFrame {
         start.addActionListener(evt -> {
 
             try {
-                // 🔒 EJB IS REQUIRED
+                // EJB IS REQUIRED
                 GameConfigServiceRemote service = lookupEJB();
                 int size = (int) sizeBox.getSelectedItem();
 
