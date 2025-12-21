@@ -207,8 +207,27 @@ public class GameLogic {
                                         " at (" + x + "," + y + ") " +
                                         "HP before = " + p.getlife());
 
-                        // Ball hits this piece
-                        p.decreaseLife(1);
+                        int maxscore = 20;
+                        if (p.getOwner() == player1) {
+                            player2.setScore(player2.getScore() + 1);
+                            if (player2.getScore() >= maxscore && p.getlife() >= 3) {
+                                p.decreaseLife(3);
+                            } else {
+                                // Ball hits this piece
+                                p.decreaseLife(1);
+                            }
+                        } else if (p.getOwner() == player2) {
+                            player1.setScore(player1.getScore() + 1);
+                            if (player1.getScore() >= maxscore && p.getlife() >= 3) {
+                                p.decreaseLife(3);
+                            } else {
+                                // Ball hits this piece
+                                p.decreaseLife(1);
+                            }
+                        }
+                        if (player1.getScore() == maxscore) {
+                            p.decreaseLife(3);
+                        }
 
                         System.out.println("HP after = " + p.getlife());
 

@@ -105,7 +105,11 @@ public class TerrainPanelNetwork extends JPanel {
         g.setFont(new Font("Arial", Font.BOLD, 16));
 
         g.drawString("Player 1: " + state.player1Name, 10, 20);
-        g.drawString("Player 2: " + state.player2Name, 10, getHeight() - 10);
+        g.drawString("Player 2: " + state.player2Name, 10, getHeight() - 20);
+
+        g.setColor(Color.RED);
+        g.drawString("Player 1: " + state.player1Score, 10, 20);
+        g.drawString("Player 2: " + state.player2Score, 10, getHeight() - 20);
 
         // Ball
         g.setColor(Color.BLUE);
